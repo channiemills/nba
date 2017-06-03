@@ -49,7 +49,9 @@ may need to grab the ```PCT``` for both teams from the game before. This should 
 
 #### Comparing basketball reference top 10 teams to top 10 teams returned from this data transformation.
 
-![final data](./screenshots/bball_ref_top10.PNG?raw=true, "Bball Ref top 10") ![final data](./screenshots/script_top10.PNG?raw=true, "Outcome top 10")
+Basketball Reference Top 10                                        | Resultant Top 10
+:------------------------------------------------------------------|:------------------------------------------------------------:
+![](./screenshots/bball_ref_top10.PNG?raw=true, "Bball Ref top 10")|![](./screenshots/script_top10.PNG?raw=true, "Outcome top 10")
 
 Note: This script runs in about 15 seconds compiling a season's worth of games.
 
