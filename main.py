@@ -140,7 +140,7 @@ df.to_csv('result.csv')
 # Sanity check
 
 wins = df[['Team', 'Wins', 'GP', 'PCT']][df['GP'] == 82]
-wins.sort_values('PCT', ascending=0, inplace=True)
+wins.sort_values(['PCT','Team'], ascending=[0, 1], inplace=True)
 wins['Losses'] = wins['GP']-wins['Wins']
 check = wins[['Team', 'Wins', 'Losses', 'PCT']]
 
