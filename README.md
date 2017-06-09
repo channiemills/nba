@@ -58,6 +58,21 @@ Basketball Reference Top 10                                        | Resultant T
 
 _Note_: This script runs in about 15 seconds, compiling a season's worth of games.
 
+### Preliminary analysis
+
+After implementing the ```performance``` function, I was able to calculate the record for teams against opponents who were above
+and below 0.500. This led to the discovery that the Chicago Bulls actually perform slightly better than 0.500 against below 0.500
+teams, challenging my initial assumption. This will be something I will explore more thoroughly with a few seasons worth of data as
+the initial data set was restricted to the 2016-17 season.
+
+The issue with the PCT being calculated after the game was played cropped up earlier than I would have thought in that I was not able
+to reconcile wins and loss counts vs above and below 0.500 teams with the data on ESPN.com.
+* My first pass at shifting this calculation was messy, adding a 30% inc in run time for the script. It doesn't seem to be 100% accurate
+either as when lining up the team/opponent records for the same game, the opponent record for the home team does not match the record
+for the away team.
+
+Will create a branch to sort this out.
+
 ### Clean Up Steps Still Needed
 
 1. Clean up file structure
