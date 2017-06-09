@@ -37,6 +37,8 @@ game_files = glob.glob(os.path.join('./gamedata', "*.csv"))
 df_each_file = (pd.read_csv(f) for f in game_files)
 source = pd.concat(df_each_file, ignore_index=True)
 
+
+## Single function for column transforms## 
 # Order by Game Date, Time
 source['Date'] = pd.to_datetime(source['Date'])
 source['Start (ET)'] = pd.to_datetime(source['Start (ET)'], format='%I:%M %p').dt.time
@@ -60,6 +62,8 @@ source = source.drop(['Unnamed: 6', 'Notes'], 1)
 # Update Overtime Column w/ 1 and 0
 source['Overtime'].fillna(0, inplace=True)
 source.loc[source['Overtime'] == 'OT', 'Overtime'] = 1
+
+## / end function ##
 
 # Identify Winner #
 
@@ -85,7 +89,11 @@ df_away = pd.DataFrame()
 df_home = pd.DataFrame()
 
 
-def reform_df(source_df, empty_df, x, y):
+def reform_df(source_df, empty_df, x, y, z):
+    """
+    Creates new df taking using index of home and away team and strings 'Home' and 'Away'
+    Used to build game level data for each team.
+    """
     for i, r in enumerate(source_df.itertuples(),1):
         empty_df = empty_df.append({'GameID': r.GameID,
                                     'Team': r[x],
@@ -93,16 +101,18 @@ def reform_df(source_df, empty_df, x, y):
                                     'PT_Diff': r.PT_Diff,
                                     'Overtime': r.Overtime,
                                     'Date': r.Date,
+                                    'Opponent': r[z],
                                     'Start_EST': r.Start_EST}, ignore_index=True)
     return empty_df
 
 
-df_away = reform_df(source, df_away, 4, 'Away')
-df_home = reform_df(source, df_home, 6, 'Home')
+df_away = reform_df(source, df_away, 4, 'Away', 6)
+df_home = reform_df(source, df_home, 6, 'Home', 4)
 
 # print df_away.head(), df_home.head()
 
 # Add W/L column
+
 
 def win_or_loss(row,winning_team):
     a = source['GameID'][source['Winner'] == winning_team]
@@ -118,6 +128,8 @@ df_home['W/L'] = df_home.apply(lambda row: win_or_loss(row, 'Home'), axis=1)
 
 # Combine into one df to get all games
 df = pd.concat([df_away,df_home])
+
+## Function for result df cleanup ## 
 df.sort_values(['GameID', 'W/L'], ascending=[1, 0], inplace=True)
 
 
@@ -131,18 +143,30 @@ df['Wins'] = (df['W/L']).groupby(df['Team']).cumsum()
 df['GP'] = df.groupby('Team').cumcount()+1
 df['PCT'] = df['Wins']/df['GP']
 
+# Add opponent record
+df['Opponent_PCT'] = 1-(df['W/L']).groupby(df['Opponent']).cumsum()/(df.groupby('Opponent').cumcount()+1)
+
+# Round records
+df = df.round({'PCT': 3, 'Opponent_PCT': 3})
+
 # Reorder columns for clarity
 
-df = df[['GameID', 'Date', 'Start_EST', 'H/A', 'Team', 'W/L', 'Overtime', 'PT_Diff', 'Wins', 'GP', 'PCT']]
+df = df[['GameID', 'Date', 'Start_EST', 'H/A', 'Team', 'W/L', 'Overtime', 'PT_Diff', 'Wins', 'GP', 'PCT', 'Opponent', 'Opponent_PCT']]
 
 df.to_csv('result.csv')
 
+## /end function ## 
+
 # Sanity check
 
-wins = df[['Team', 'Wins', 'GP', 'PCT']][df['GP'] == 82]
+## sanity check function? ## 
+
+wins = df[['Team', 'Wins', 'GP', 'PCT', 'Opponent', 'Opponent_PCT']][df['GP'] == 82]
 wins.sort_values(['PCT','Team'], ascending=[0, 1], inplace=True)
 wins['Losses'] = wins['GP']-wins['Wins']
 check = wins[['Team', 'Wins', 'Losses', 'PCT']]
+
+## / end function ## 
 
 execution_time = timeit.default_timer() - start_time
 print check.head(10)

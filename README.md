@@ -20,11 +20,14 @@ all the pieces needed to make it happen. The first step was pulling down all the
 * Adding columns for calculated data
   * Winner ```Winner```
   * Point Differential ```PT_Diff```
-* Create temporary data frame for home and away teams to combine into one master list
+* Create restructured temporary data frame for home and away teams to combine into one master list
+  * This included game level data (from source data) for each team
 * Adding columns to temporary data frame for columns calculated by game by team
-  * Whether it was a win or a loss ```W/L```
+  * Whether it was a win or a loss ```W/L``` (Win = 1, Loss = 0)
+* Combining home and away data frames into a single data frame containing two records (home and away team) for each game with some additional calculated fields.
   * Cumulative sum of wins ```Wins```
   * Cumulative sum of games played ```GP```
+  * ```Opponent``` and ```Opponent_PCT```
 
 ## Analysis Ready Data
 
@@ -36,13 +39,13 @@ and the critical points for this analysis:
 * Outcome of that game for both teams, whether it was a win or loss ```W/L```
 
 #### Final data showing the start of the season
-![final data](./screenshots/res-data1.PNG?raw=true, "First ten rows of result")
+![final data](./screenshots/res-data1v1.PNG?raw=true, "First ten rows of result")
 
 #### Final data showing the end of the season
-![final data](./screenshots/res-data2.PNG?raw=true, "Last ten rows of result")
+![final data](./screenshots/res-data2v2.PNG?raw=true, "Last ten rows of result")
 
 
-_Developer Note_ : The record ```PCT``` at each game is actually including that game, not going into that game. For analysis
+_Developer Note_: The record ```PCT``` at each game is actually including that game, not going into that game. For analysis
 may need to grab the ```PCT``` for both teams from the game before. This should be easy to grab using ```GameID```
 
 ## Sanity Check
@@ -53,7 +56,7 @@ Basketball Reference Top 10                                        | Resultant T
 :------------------------------------------------------------------|:------------------------------------------------------------:
 ![](./screenshots/bball_ref_top10.PNG?raw=true, "Bball Ref top 10")|![](./screenshots/script_top10.PNG?raw=true, "Outcome top 10")
 
-Note: This script runs in about 15 seconds compiling a season's worth of games.
+_Note_: This script runs in about 15 seconds, compiling a season's worth of games.
 
 ### Clean Up Steps Still Needed
 
@@ -74,14 +77,9 @@ python 2.7
 pandas
 ```
 
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
 ## Authors
 
-* **channiemills** - *Initial work* - [PurpleBooth](https://github.com/channiemills)
+* **channiemills** - *Initial work* - [channiemills](https://github.com/channiemills)
 
 
 ## Acknowledgments
