@@ -3,7 +3,7 @@ Look at NBA team performance based on opponent record.
 
 Later can look at factors like back to back, weekend games, home or away etc
 
-* Assumes main has been run
+* Assumes main has been run. Perhaps we can pass pct as a variable in future...
 """
 
 
