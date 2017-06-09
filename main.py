@@ -67,6 +67,7 @@ source.loc[source['Overtime'] == 'OT', 'Overtime'] = 1
 
 # Identify Winner #
 
+
 def who_won(row):
     if row['PTS.1'] > row['PTS']:
         winner = 'Home'
@@ -91,7 +92,7 @@ df_home = pd.DataFrame()
 
 def reform_df(source_df, empty_df, x, y, z):
     """
-    Creates new df taking using index of home and away team and strings 'Home' and 'Away'
+    Creates new df using index of home and away team and strings 'Home' and 'Away'
     Used to build game level data for each team.
     """
     for i, r in enumerate(source_df.itertuples(),1):
@@ -137,14 +138,27 @@ df.sort_values(['GameID', 'W/L'], ascending=[1, 0], inplace=True)
 df['PT_Diff'] = df['PT_Diff'].where(df['W/L'] == 1, -df['PT_Diff'])
 
 
-# Add record PCT #
+# Add fields needed for record PCT #
 
-df['Wins'] = (df['W/L']).groupby(df['Team']).cumsum()
-df['GP'] = df.groupby('Team').cumcount()+1
+df['Wins'] = (df['W/L']).groupby(df['Team']).cumsum()-1  # subtracting one to calc record coming into the game
+df['GP'] = df.groupby('Team').cumcount()  # got rid of +1 to not count first instance
+
+# Set negatives to 0 to clean up for teams that start on losing streak
+df.loc[df['Wins'] < 0, 'Wins'] = 0
+
+# Calculate Record PCT #
 df['PCT'] = df['Wins']/df['GP']
 
-# Add opponent record
-df['Opponent_PCT'] = 1-(df['W/L']).groupby(df['Opponent']).cumsum()/(df.groupby('Opponent').cumcount()+1)
+# Clean NaNs #
+df.PCT = df.PCT.fillna(0)
+
+# Repeat with opponent record // should be able to find a better way to do this
+df['Opponent_Wins'] = (df['W/L']).groupby(df['Opponent']).cumsum()-1
+df['Opp_GP'] = df.groupby('Opponent').cumcount()
+df.loc[df['Opponent_Wins'] < 0, 'Opponent_Wins'] = 0
+df['Opponent_PCT'] = 1-df['Opponent_Wins']/df['Opp_GP']
+df.Opponent_PCT = df.Opponent_PCT.fillna(0)
+
 
 # Round records
 df = df.round({'PCT': 3, 'Opponent_PCT': 3})
