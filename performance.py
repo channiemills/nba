@@ -17,4 +17,3 @@ def vs500teams(df, team, type):
         below500_wins = teamdf[teamdf.Opponent_PCT < 0.500].sum()['W/L']
         below500_games = teamdf[teamdf.Opponent_PCT < 0.500].count()['W/L']
         return round(below500_wins/below500_games, 3)
-
