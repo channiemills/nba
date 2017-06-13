@@ -39,14 +39,14 @@ and the critical points for this analysis:
 * Outcome of that game for both teams, whether it was a win or loss ```W/L```
 
 #### Final data showing the start of the season
-![final data](./screenshots/res-data1v1.PNG?raw=true, "First ten rows of result")
+![final data](./screenshots/res-data1v3.PNG?raw=true, "First ten rows of result")
 
 #### Final data showing the end of the season
-![final data](./screenshots/res-data2v2.PNG?raw=true, "Last ten rows of result")
+![final data](./screenshots/res-data2v3.PNG?raw=true, "Last ten rows of result")
 
 
-_Developer Note_: The record ```PCT``` at each game is actually including that game, not going into that game. For analysis
-may need to grab the ```PCT``` for both teams from the game before. This should be easy to grab using ```GameID```
+_Developer Note_: The record ```PCT``` at each game was changed to exclude the outcome of that game in the calculation at v 1.0.1.
+Didn't see an immediate need for record at each game including the outcome of that game but this can be obtained from the ```helpers.season_totals```
 
 ## Sanity Check
 
@@ -66,12 +66,10 @@ teams, challenging my initial assumption. This will be something I will explore 
 the initial data set was restricted to the 2016-17 season.
 
 The issue with the PCT being calculated after the game was played cropped up earlier than I would have thought in that I was not able
-to reconcile wins and loss counts vs above and below 0.500 teams with the data on ESPN.com.
-* My first pass at shifting this calculation was messy, adding a 30% inc in run time for the script. It doesn't seem to be 100% accurate
-either as when lining up the team/opponent records for the same game, the opponent record for the home team does not match the record
-for the away team.
-
-Will create a branch to sort this out.
+to reconcile wins and loss counts vs above and below 0.500 teams with the data on [ESPN.com](http://proxy.espn.com/nba/standings?type=expanded).
+This was related to calculation errors resolved in v 1.0.1 but also ESPN calculates record vs above/below 500 teams based on the end of
+season record and not record going into the game. This is an important distinction that this data adds to analysis as we couldn't make gametime
+predictions based on a team's end of season record.
 
 ### Clean Up Steps Still Needed
 
@@ -81,6 +79,7 @@ Will create a branch to sort this out.
 
 ### Analysis Steps Still Needed
 1. Look for relationships between team performance and opponent performance
+  * Consider storing season ids, date/time in other data frames.
 2. Attempt to fit (hidden) markov model to performance data for a team with the observation being W/L and the hidden state being opponent win pct.
 
 ### Installing
